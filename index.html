@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoffeeStop — Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="logo">
+      <img src="white_only.png" alt="CoffeeStop" class="logo-img">
+    </div>
+    <div class="header-right">
+      <div class="time-display" id="clock"></div>
+    </div>
+  </header>
+
+  <!-- ── MAIN LAYOUT ── -->
+  <div class="layout">
+
+    <!-- LEFT: MENU SECTION WITH TABS -->
+    <div class="menu-section-wrapper">
+      <div class="category-tabs" id="tabs"></div>
+      <div class="menu-panel">
+        <div id="menu-container"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: ORDER PANEL -->
+    <div class="order-panel">
+
+      <div class="order-header">
+        <div class="order-title">YOUR ORDER</div>
+        <div class="order-count" id="order-count">0 items</div>
+        <div class="order-type-btns">
+          <button class="ot-btn active" onclick="setOrderType(this, 'Dine In')">🍽 Dine In</button>
+          <button class="ot-btn" onclick="setOrderType(this, 'Take Out')">🥡 Take Out</button>
+        </div>
+      </div>
+
+      <div class="cart-items" id="cart-items">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">☕</div>
+          <div class="cart-empty-text">Your order is empty</div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <div class="summary-row"><span>Subtotal</span><span id="subtotal">₱0.00</span></div>
+        <div class="summary-row total">
+          <span>TOTAL</span>
+          <span class="val" id="total">₱0.00</span>
+        </div>
+        <button class="checkout-btn" id="checkout-btn" disabled onclick="checkout()">
+          PLACE ORDER
+        </button>
+        <button class="clear-btn" id="clear-btn" style="display:none" onclick="clearCart()">
+          Clear Order
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ORDER CONFIRMATION MODAL ── -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-emoji">🎉</div>
+      <div class="order-number" id="modal-order-num">#001</div>
+      <div class="modal-title">ORDER PLACED!</div>
+      <div class="modal-sub" id="modal-type">Dine In · Please wait for your order</div>
+      <div class="modal-order" id="modal-items"></div>
+      <button class="modal-new-btn" onclick="newOrder()">NEW ORDER</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
