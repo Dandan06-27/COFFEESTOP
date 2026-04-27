@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoffeeStop — Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <!-- Background coffee beans decoration -->
+  <div class="bg-decor">
+    <div class="bean bean-1">☕</div>
+    <div class="bean bean-2">🫘</div>
+    <div class="bean bean-3">☕</div>
+    <div class="bean bean-4">🫘</div>
+    <div class="bean bean-5">☕</div>
+    <div class="bean bean-6">🫘</div>
+  </div>
+
+  <!-- Main container -->
+  <div class="container">
+
+    <!-- ── LOGO ── -->
+    <div class="logo-section">
+      <div class="logo-ring">
+        <div class="logo-icon">☕</div>
+      </div>
+      <h1 class="logo-text">COFFEESTOP</h1>
+      <p class="logo-tagline">Your daily brew, made easy.</p>
+    </div>
+
+    <!-- ── ROLE SELECTOR (default screen) ── -->
+    <div class="role-screen" id="role-screen">
+      <p class="screen-label">HOW WOULD YOU LIKE TO CONTINUE?</p>
+      <div class="role-cards">
+
+        <!-- Customer Card -->
+        <div class="role-card" id="customer-card" onclick="goCustomer()">
+          <div class="rc-icon">🙋</div>
+          <div class="rc-title">Customer</div>
+          <div class="rc-desc">Browse the menu and place your order at the kiosk</div>
+          <div class="rc-arrow">→</div>
+        </div>
+
+        <!-- Cashier Card -->
+        <div class="role-card" id="cashier-card" onclick="showCashierLogin()">
+          <div class="rc-icon">🏦</div>
+          <div class="rc-title">Cashier</div>
+          <div class="rc-desc">Access the cashier terminal to process payments</div>
+          <div class="rc-arrow">→</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── CASHIER LOGIN FORM ── -->
+    <div class="login-screen" id="login-screen" style="display:none">
+      <button class="back-btn" onclick="showRoleScreen()">← Back</button>
+      <div class="login-header">
+        <div class="login-icon">🔐</div>
+        <h2 class="login-title">CASHIER LOGIN</h2>
+        <p class="login-sub">Enter your credentials to access the terminal</p>
+      </div>
+
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group" id="fg-username">
+          <label class="form-label">USERNAME</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input
+              type="text"
+              id="username"
+              class="form-input"
+              placeholder="e.g. cashier01"
+              autocomplete="username"
+              spellcheck="false"
+            >
+          </div>
+          <div class="field-error" id="err-username"></div>
+        </div>
+
+        <div class="form-group" id="fg-password">
+          <label class="form-label">PASSWORD</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔑</span>
+            <input
+              type="password"
+              id="password"
+              class="form-input"
+              placeholder="Enter password"
+              autocomplete="current-password"
+            >
+            <button type="button" class="toggle-pw" id="toggle-pw" onclick="togglePassword()">👁</button>
+          </div>
+          <div class="field-error" id="err-password"></div>
+        </div>
+
+        <div class="login-error" id="login-error" style="display:none">
+          <span>⚠️</span> Invalid username or password.
+        </div>
+
+        <button type="submit" class="login-btn" id="login-btn">
+          <span id="login-btn-text">SIGN IN</span>
+          <span id="login-btn-spinner" style="display:none">⏳</span>
+        </button>
+      </form>
+
+      <div class="login-hint">
+        <div class="hint-label">DEMO ACCOUNTS</div>
+        <div class="hint-accounts">
+          <div class="hint-row" onclick="fillDemo('cashier01','coffee123')">
+            <span class="hint-user">cashier01</span>
+            <span class="hint-pass">coffee123</span>
+            <span class="hint-fill">↗ Fill</span>
+          </div>
+          <div class="hint-row" onclick="fillDemo('cashier02','latte456')">
+            <span class="hint-user">cashier02</span>
+            <span class="hint-pass">latte456</span>
+            <span class="hint-fill">↗ Fill</span>
+          </div>
+          <div class="hint-row" onclick="fillDemo('manager','admin789')">
+            <span class="hint-user">manager</span>
+            <span class="hint-pass">admin789</span>
+            <span class="hint-fill">↗ Fill</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

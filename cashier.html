@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoffeeStop — Cashier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cashier.css">
+  <script>
+    // ── SESSION GUARD ──
+    // Redirect to login if no cashier session found
+    (function() {
+      const session = sessionStorage.getItem('coffeestop_cashier_session');
+      if (!session) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-left">
+      <div class="logo">
+        <img src="white_only.png" alt="CoffeeStop" class="logo-img">
+      </div>
+      <div class="header-badge">CASHIER TERMINAL</div>
+    </div>
+    <div class="header-center">
+      <div class="live-dot"></div>
+      <span id="queue-label">Queue: <strong id="queue-count">0</strong> pending</span>
+    </div>
+    <div class="header-right">
+      <div class="cashier-info">
+        <span class="cashier-name" id="cashier-name-display">👤 —</span>
+        <span class="time-display" id="clock"></span>
+      </div>
+      <button class="logout-btn" onclick="logoutCashier()" title="Logout">⏻ Logout</button>
+    </div>
+  </header>
+
+  <!-- ── MAIN LAYOUT ── -->
+  <div class="layout">
+
+    <!-- ════ LEFT: INCOMING ORDERS QUEUE ════ -->
+    <div class="queue-panel">
+      <div class="panel-title">
+        <span>📋 INCOMING ORDERS</span>
+        <div class="filter-tabs">
+          <button class="ftab active" onclick="filterQueue(this,'all')">All</button>
+          <button class="ftab" onclick="filterQueue(this,'pending')">Pending</button>
+          <button class="ftab" onclick="filterQueue(this,'processing')">Processing</button>
+          <button class="ftab" onclick="filterQueue(this,'done')">Done</button>
+        </div>
+      </div>
+      <div class="queue-list" id="queue-list">
+        <div class="empty-queue">
+          <div class="eq-icon">🧾</div>
+          <div class="eq-text">No orders yet</div>
+          <div class="eq-sub">Orders from the kiosk will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ CENTER: ORDER DETAIL / POS ════ -->
+    <div class="pos-panel">
+      <div class="pos-header">
+        <div id="pos-order-meta">
+          <div class="pos-placeholder-icon">🛒</div>
+          <div class="pos-placeholder-text">Select an order from the queue</div>
+          <div class="pos-placeholder-sub">or create a walk-in order below</div>
+        </div>
+        <button class="walkin-btn" onclick="createWalkIn()">+ Walk-in Order</button>
+      </div>
+
+      <!-- Order items -->
+      <div class="pos-items" id="pos-items"></div>
+
+      <!-- Add item row -->
+      <div class="add-item-bar" id="add-item-bar" style="display:none">
+        <div class="aib-inner">
+          <select id="quick-cat" onchange="quickCatChange()" class="quick-select">
+            <option value="">— Category —</option>
+          </select>
+          <select id="quick-item" class="quick-select">
+            <option value="">— Item —</option>
+          </select>
+          <select id="quick-variant" class="quick-select">
+            <option value="">— Variant —</option>
+            <option value="Hot">🔥 Hot</option>
+            <option value="Iced">🧊 Iced</option>
+            <option value="">Regular</option>
+          </select>
+          <button class="aib-add-btn" onclick="quickAddItem()">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ RIGHT: PAYMENT PANEL ════ -->
+    <div class="payment-panel">
+      <div class="panel-title">💳 PAYMENT</div>
+
+      <!-- Order summary -->
+      <div class="pay-summary" id="pay-summary">
+        <div class="pay-empty">Select an order to process payment</div>
+      </div>
+
+      <!-- Payment method -->
+      <div class="pay-method-section" id="pay-method-section" style="display:none">
+        <div class="pay-section-label">PAYMENT METHOD</div>
+        <div class="pay-method-btns">
+          <button class="pm-btn active" onclick="setPayMethod(this,'Cash')">💵 Cash</button>
+          <button class="pm-btn" onclick="setPayMethod(this,'GCash')">📱 GCash</button>
+          <button class="pm-btn" onclick="setPayMethod(this,'Card')">💳 Card</button>
+        </div>
+
+        <!-- Cash tendered -->
+        <div class="cash-section" id="cash-section">
+          <div class="pay-section-label">AMOUNT TENDERED</div>
+          <div class="tendered-display" id="tendered-display">₱0</div>
+          <div class="numpad">
+            <button class="np-btn" onclick="numpadPress('1')">1</button>
+            <button class="np-btn" onclick="numpadPress('2')">2</button>
+            <button class="np-btn" onclick="numpadPress('3')">3</button>
+            <button class="np-btn" onclick="numpadPress('4')">4</button>
+            <button class="np-btn" onclick="numpadPress('5')">5</button>
+            <button class="np-btn" onclick="numpadPress('6')">6</button>
+            <button class="np-btn" onclick="numpadPress('7')">7</button>
+            <button class="np-btn" onclick="numpadPress('8')">8</button>
+            <button class="np-btn" onclick="numpadPress('9')">9</button>
+            <button class="np-btn np-clear" onclick="numpadPress('C')">C</button>
+            <button class="np-btn" onclick="numpadPress('0')">0</button>
+            <button class="np-btn np-del" onclick="numpadPress('⌫')">⌫</button>
+          </div>
+          <!-- Quick cash presets -->
+          <div class="cash-presets" id="cash-presets"></div>
+          <!-- Change -->
+          <div class="change-row" id="change-row" style="display:none">
+            <span>Change</span>
+            <span class="change-val" id="change-val">₱0</span>
+          </div>
+        </div>
+
+        <!-- Digital payment section -->
+        <div class="digital-section" id="digital-section" style="display:none">
+          <div class="qr-placeholder">
+            <div class="qr-icon">📲</div>
+            <div class="qr-text">Show QR or enter reference</div>
+            <input type="text" class="ref-input" id="ref-input" placeholder="Reference number...">
+          </div>
+        </div>
+
+        <!-- Discount -->
+        <div class="discount-row">
+          <div class="pay-section-label">DISCOUNT</div>
+          <div class="discount-btns">
+            <button class="disc-btn active" onclick="setDiscount(this,0)">None</button>
+            <button class="disc-btn" onclick="setDiscount(this,0.05)">PWD 5%</button>
+            <button class="disc-btn" onclick="setDiscount(this,0.20)">SC 20%</button>
+            <button class="disc-btn" onclick="setDiscount(this,0.10)">Staff 10%</button>
+          </div>
+        </div>
+
+        <!-- Totals -->
+        <div class="pay-totals">
+          <div class="pt-row"><span>Subtotal</span><span id="pt-subtotal">₱0.00</span></div>
+          <div class="pt-row discount-line" id="pt-disc-row" style="display:none">
+            <span id="pt-disc-label">Discount</span><span class="disc-amt" id="pt-disc-amt">-₱0.00</span>
+          </div>
+          <div class="pt-row total-row"><span>TOTAL</span><span id="pt-total">₱0.00</span></div>
+        </div>
+
+        <!-- Confirm button -->
+        <button class="confirm-btn" id="confirm-btn" onclick="confirmPayment()">
+          CONFIRM PAYMENT
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RECEIPT MODAL ── -->
+  <div class="modal-overlay" id="receipt-modal">
+    <div class="receipt">
+      <div class="receipt-header">
+        <div class="r-logo">☕ COFFEESTOP</div>
+        <div class="r-addr">Cebu City, Philippines</div>
+        <div class="r-line"></div>
+      </div>
+      <div class="receipt-meta">
+        <div class="rm-row"><span>Order #</span><strong id="r-order-num">—</strong></div>
+        <div class="rm-row"><span>Type</span><strong id="r-type">—</strong></div>
+        <div class="rm-row"><span>Cashier</span><strong>Cashier 01</strong></div>
+        <div class="rm-row"><span>Date</span><strong id="r-date">—</strong></div>
+      </div>
+      <div class="r-line"></div>
+      <div class="receipt-items" id="r-items"></div>
+      <div class="r-line"></div>
+      <div class="receipt-totals" id="r-totals"></div>
+      <div class="r-line"></div>
+      <div class="receipt-footer">
+        <div class="rf-thanks">Thank you for visiting!</div>
+        <div class="rf-sub">Please come again ☕</div>
+        <div class="receipt-actions">
+          <button class="ra-btn ra-print" onclick="printReceipt()">🖨 Print</button>
+          <button class="ra-btn ra-close" onclick="closeReceipt()">✓ Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ── SUPABASE ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+  <script src="app.js"></script>
+  <script src="cashier.js"></script>
+</body>
+</html>
